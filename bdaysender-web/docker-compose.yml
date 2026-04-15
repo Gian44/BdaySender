@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bdaysender-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: bdaysender
+      POSTGRES_PASSWORD: bdaysender
+      POSTGRES_DB: bdaysender
+    ports:
+      - "5432:5432"
+    volumes:
+      - bdaysender_pgdata:/var/lib/postgresql/data
+
+volumes:
+  bdaysender_pgdata:

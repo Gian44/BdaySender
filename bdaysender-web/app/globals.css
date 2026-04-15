@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --brand-pink: #ec4899;
+  --brand-purple: #7c3aed;
+  --brand-blue: #2563eb;
+  --brand-soft: #fdf2f8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  color-scheme: light;
+  background:
+    radial-gradient(circle at 10% 12%, rgb(244 114 182 / 14%), transparent 28%),
+    radial-gradient(circle at 90% 18%, rgb(124 58 237 / 12%), transparent 28%),
+    radial-gradient(circle at 30% 90%, rgb(37 99 235 / 10%), transparent 30%),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+.surface-card {
+  background: rgb(255 255 255 / 95%);
+  border: 1px solid rgb(226 232 240 / 90%);
+  box-shadow: 0 12px 24px rgb(15 23 42 / 7%);
+}
+
+.hero-gradient {
+  background: linear-gradient(
+    135deg,
+    rgb(253 242 248 / 95%) 0%,
+    rgb(245 243 255 / 95%) 50%,
+    rgb(239 246 255 / 95%) 100%
+  );
+}
+
+.btn-primary {
+  background: linear-gradient(120deg, var(--brand-pink), var(--brand-purple));
+  color: white;
+  border: none;
+  box-shadow: 0 6px 14px rgb(124 58 237 / 25%);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.04);
+}
+
+.btn-secondary {
+  border: 1px solid rgb(203 213 225);
+  background: white;
+  color: rgb(51 65 85);
+}
+
+.btn-secondary:hover {
+  background: rgb(248 250 252);
+}
+
+.status-chip {
+  background: var(--brand-soft);
+  color: #9d174d;
+  border: 1px solid rgb(251 207 232);
+}
