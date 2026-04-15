@@ -1,0 +1,10 @@
+{
+  "name": "bdaysender",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix bdaysender-web run dev",
+    "build": "npm --prefix bdaysender-web run build",
+    "start": "npm --prefix bdaysender-web run start",
+    "vercel-build": "npm --prefix bdaysender-web run build"
+  }
+}
