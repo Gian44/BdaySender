@@ -23,6 +23,7 @@ export default function Home() {
   const [isDayModalOpen, setIsDayModalOpen] = useState(false);
   const [showPersonForm, setShowPersonForm] = useState(false);
   const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
+  const [sendingPersonId, setSendingPersonId] = useState<number | null>(null);
   const [status, setStatus] = useState("Loading...");
 
   const selectedDate = useMemo(() => {
@@ -160,6 +161,24 @@ export default function Home() {
     setStatus("Person deleted.");
   };
 
+  const sendBirthdayToPerson = async (person: Person) => {
+    setSendingPersonId(person.id);
+    try {
+      const response = await fetch(`/api/people/${person.id}/send-birthday`, { method: "POST" });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => ({}))) as { error?: string };
+        throw new Error(payload.error || "Unable to send birthday message");
+      }
+      setStatus(`Birthday message sent to ${person.name}.`);
+    } catch (error) {
+      setStatus(
+        `Send failed for ${person.name}: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    } finally {
+      setSendingPersonId(null);
+    }
+  };
+
   const saveTemplate = async (templates: string[]) => {
     const response = await fetch("/api/template", {
       method: "PATCH",
@@ -271,6 +290,14 @@ export default function Home() {
                       ) : null}
                     </div>
                     <div className="flex gap-2">
+                      <button
+                        type="button"
+                        className="btn-primary rounded-full px-3 py-1 disabled:opacity-70"
+                        disabled={sendingPersonId !== null}
+                        onClick={() => sendBirthdayToPerson(person)}
+                      >
+                        {sendingPersonId === person.id ? "Sending..." : "Send now"}
+                      </button>
                       <button
                         type="button"
                         className="btn-secondary rounded-full px-3 py-1"
