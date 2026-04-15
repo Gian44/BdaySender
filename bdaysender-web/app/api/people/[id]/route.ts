@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { deleteFallbackPerson, updateFallbackPerson } from "@/lib/fallback-store";
 import { query } from "@/lib/db";
 import type { Person } from "@/lib/types";
 
@@ -26,30 +25,6 @@ function parseId(params: { id: string }) {
 }
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!process.env.DATABASE_URL) {
-    try {
-      const { id: rawId } = await params;
-      const id = parseId({ id: rawId });
-      const payload = personUpdateSchema.parse(await request.json());
-      const person = updateFallbackPerson(id, payload);
-      if (!person) {
-        return NextResponse.json({ error: "Person not found" }, { status: 404 });
-      }
-      return NextResponse.json({ person });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return NextResponse.json(
-          { error: "Invalid person payload", details: error.flatten() },
-          { status: 400 },
-        );
-      }
-      if (error instanceof Error && error.message === "Invalid id") {
-        return NextResponse.json({ error: "Invalid person id" }, { status: 400 });
-      }
-      return NextResponse.json({ error: "Failed to update person" }, { status: 500 });
-    }
-  }
-
   try {
     const { id: rawId } = await params;
     const id = parseId({ id: rawId });
@@ -116,23 +91,6 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  if (!process.env.DATABASE_URL) {
-    try {
-      const { id: rawId } = await params;
-      const id = parseId({ id: rawId });
-      const deleted = deleteFallbackPerson(id);
-      if (!deleted) {
-        return NextResponse.json({ error: "Person not found" }, { status: 404 });
-      }
-      return NextResponse.json({ ok: true });
-    } catch (error) {
-      if (error instanceof Error && error.message === "Invalid id") {
-        return NextResponse.json({ error: "Invalid person id" }, { status: 400 });
-      }
-      return NextResponse.json({ error: "Failed to delete person" }, { status: 500 });
-    }
-  }
-
   try {
     const { id: rawId } = await params;
     const id = parseId({ id: rawId });

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { query } from "@/lib/db";
-import { getFallbackTemplate, setFallbackTemplate } from "@/lib/fallback-store";
 import {
   DEFAULT_TEMPLATE,
   DEFAULT_TEMPLATES,
@@ -40,16 +39,6 @@ async function ensureTemplateRow() {
 }
 
 export async function GET() {
-  if (!process.env.DATABASE_URL) {
-    const fallback = getFallbackTemplate();
-    return NextResponse.json({
-      template: {
-        ...fallback,
-        templates: normalizeTemplates(fallback.templates ?? parseTemplates(fallback.body)),
-      },
-    });
-  }
-
   try {
     await ensureTemplateRow();
     const result = await query<MessageTemplate>(
@@ -73,28 +62,6 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  if (!process.env.DATABASE_URL) {
-    try {
-      const payload = templateSchema.parse(await request.json());
-      const templates = validateTemplates(
-        payload.templates ?? normalizeTemplates([payload.body ?? DEFAULT_TEMPLATE]),
-      );
-      const template = setFallbackTemplate({ templates });
-      return NextResponse.json({ template });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return NextResponse.json(
-          { error: "Invalid template payload", details: error.flatten() },
-          { status: 400 },
-        );
-      }
-      if (error instanceof Error) {
-        return NextResponse.json({ error: error.message }, { status: 400 });
-      }
-      return NextResponse.json({ error: "Failed to update template" }, { status: 500 });
-    }
-  }
-
   try {
     await ensureTemplateRow();
     const payload = templateSchema.parse(await request.json());
