@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "cd bdaysender-web && npm run dev",
-    "build": "node scripts/vercel-root-build.mjs",
+    "build": "cd bdaysender-web && npm run build",
     "start": "cd bdaysender-web && npm run start",
-    "vercel-build": "node scripts/vercel-root-build.mjs"
+    "vercel-build": "cd bdaysender-web && npm run build"
   }
 }

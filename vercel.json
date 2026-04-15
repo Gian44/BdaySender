@@ -1,7 +1,7 @@
 {
   "framework": "nextjs",
   "installCommand": "cd bdaysender-web && npm install",
-  "buildCommand": "npm run vercel-build",
+  "buildCommand": "cd bdaysender-web && npm run build",
   "crons": [
     {
       "path": "/api/cron/send-birthdays",
