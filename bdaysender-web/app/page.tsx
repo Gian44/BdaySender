@@ -22,6 +22,7 @@ export default function Home() {
   const [editingPerson, setEditingPerson] = useState<Person | null>(null);
   const [isDayModalOpen, setIsDayModalOpen] = useState(false);
   const [showPersonForm, setShowPersonForm] = useState(false);
+  const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
   const [status, setStatus] = useState("Loading...");
 
   const selectedDate = useMemo(() => {
@@ -30,20 +31,34 @@ export default function Home() {
   }, [monthDate, selectedDay]);
 
   async function loadData() {
-    const [peopleResponse, templateResponse] = await Promise.all([
+    const [peopleResult, templateResult] = await Promise.allSettled([
       fetch("/api/people"),
       fetch("/api/template"),
     ]);
 
-    if (!peopleResponse.ok || !templateResponse.ok) {
-      throw new Error("Failed to load app data");
+    let peopleData: Person[] = [];
+    let templateData: MessageTemplate | null = null;
+    const failedParts: string[] = [];
+
+    if (peopleResult.status === "fulfilled" && peopleResult.value.ok) {
+      const payload = (await peopleResult.value.json()) as { people: Person[] };
+      peopleData = payload.people;
+    } else {
+      failedParts.push("people");
     }
 
-    const peopleData = (await peopleResponse.json()) as { people: Person[] };
-    const templateData = (await templateResponse.json()) as { template: MessageTemplate };
+    if (templateResult.status === "fulfilled" && templateResult.value.ok) {
+      const payload = (await templateResult.value.json()) as { template: MessageTemplate };
+      templateData = payload.template;
+    } else {
+      failedParts.push("template");
+    }
+
     return {
-      people: peopleData.people,
-      template: templateData.template,
+      people: peopleData,
+      template: templateData,
+      hasFailure: failedParts.length > 0,
+      failedParts,
     };
   }
 
@@ -55,10 +70,14 @@ export default function Home() {
         if (!isMounted) return;
         setPeople(data.people);
         setTemplate(data.template);
-        setStatus("Ready");
+        setStatus(
+          data.hasFailure
+            ? `Unable to load ${data.failedParts.join(" + ")} data. Check API/database config.`
+            : "Ready",
+        );
       } catch (error) {
         if (!isMounted) return;
-        console.error(error);
+        console.warn("Unexpected app bootstrap error:", error);
         setStatus("Failed to load data. Check API/database config.");
       }
     };
@@ -160,16 +179,26 @@ export default function Home() {
     <main className="min-h-screen py-8">
       <div className="mx-auto w-full max-w-6xl space-y-6 px-4">
         <header className="surface-card hero-gradient rounded-2xl p-5">
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Birthday Sender</h1>
-          <p className="mt-1 text-sm text-slate-600">
-            A simple birthday workspace to track people, personalize messages, and automate greetings.
-          </p>
-          <div className="mt-3 flex flex-wrap gap-3 text-sm">
-            <span className="status-chip rounded-full px-3 py-1 font-medium">{status}</span>
-            <Link
-              href="/logs"
-              className="btn-secondary rounded-full px-3 py-1 font-medium"
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Birthday Sender</h1>
+              <p className="mt-1 text-sm text-slate-600">
+                A simple birthday workspace to track people, personalize messages, and automate greetings.
+              </p>
+            </div>
+            <button
+              type="button"
+              aria-label={isHeaderMenuOpen ? "Hide header actions" : "Show header actions"}
+              aria-expanded={isHeaderMenuOpen}
+              onClick={() => setIsHeaderMenuOpen((current) => !current)}
+              className="rounded-full p-2 text-lg leading-none text-slate-500 transition hover:bg-white/60 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300"
             >
+              {isHeaderMenuOpen ? "▴" : "▾"}
+            </button>
+          </div>
+          <div className={`mt-3 flex flex-wrap gap-3 text-sm ${isHeaderMenuOpen ? "block" : "hidden"}`}>
+            <span className="status-chip rounded-full px-3 py-1 font-medium">{status}</span>
+            <Link href="/logs" className="btn-secondary rounded-full px-3 py-1 font-medium">
               View send logs
             </Link>
           </div>

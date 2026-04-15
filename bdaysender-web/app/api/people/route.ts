@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { createFallbackPerson, getFallbackPeople } from "@/lib/fallback-store";
+import { shouldUseFallbackStore } from "@/lib/db-fallback";
 import { query } from "@/lib/db";
 import { seedPeopleIfEmpty } from "@/lib/seed-db";
 import type { Person } from "@/lib/types";
@@ -30,6 +31,10 @@ export async function GET() {
     );
     return NextResponse.json({ people: result.rows });
   } catch (error) {
+    if (shouldUseFallbackStore(error)) {
+      console.warn("GET /api/people using fallback store:", error);
+      return NextResponse.json({ people: getFallbackPeople() });
+    }
     console.error("GET /api/people failed:", error);
     return NextResponse.json({ error: "Failed to load people" }, { status: 500 });
   }
@@ -52,8 +57,20 @@ export async function POST(request: Request) {
     }
   }
 
+  let payload: z.infer<typeof personCreateSchema>;
   try {
-    const payload = personCreateSchema.parse(await request.json());
+    payload = personCreateSchema.parse(await request.json());
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Invalid person payload", details: error.flatten() },
+        { status: 400 },
+      );
+    }
+    return NextResponse.json({ error: "Failed to create person" }, { status: 500 });
+  }
+
+  try {
     const result = await query<Person>(
       `INSERT INTO people (name, nickname, email, birthdate, custom_template)
        VALUES ($1, $2, $3, $4, $5)
@@ -70,11 +87,10 @@ export async function POST(request: Request) {
     );
     return NextResponse.json({ person: result.rows[0] }, { status: 201 });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Invalid person payload", details: error.flatten() },
-        { status: 400 },
-      );
+    if (shouldUseFallbackStore(error)) {
+      console.warn("POST /api/people using fallback store:", error);
+      const person = createFallbackPerson(payload);
+      return NextResponse.json({ person }, { status: 201 });
     }
     console.error("POST /api/people failed:", error);
     return NextResponse.json({ error: "Failed to create person" }, { status: 500 });
