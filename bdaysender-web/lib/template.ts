@@ -4,11 +4,11 @@ type TemplateParams = {
 };
 
 export const DEFAULT_TEMPLATES = [
-  "Happy Birthday, {firstName}! Wishing you joy, good health, and meaningful moments this year. You are now {age}!",
-  "Cheers to you, {firstName}! May this birthday open a year full of growth and happiness as you turn {age}.",
-  "Warm birthday wishes, {firstName}! Hope your day is filled with love, laughter, and everything you enjoy at {age}.",
-  "Happy Birthday, {firstName}! Thank you for being wonderful. Wishing you confidence and success at {age}.",
-  "Have an amazing birthday, {firstName}! May this new chapter at {age} bring peace, purpose, and great memories.",
+  "Happy Birthday, {firstName}! You make life brighter just by being you. I hope {age} brings you so much love, laughter, and little moments that make your heart full.",
+  "Celebrating you today, {firstName}! You deserve every sweet thing this day can bring. Welcome to {age} and a year filled with happy surprises.",
+  "Happy Birthday, {firstName}! I am so grateful for your kind heart and your warm smile. May {age} be gentle with you and full of beautiful memories.",
+  "Sending the biggest birthday hug to you, {firstName}! Thank you for being such a special person. I hope {age} brings you peace, confidence, and lots of joy.",
+  "It is your day, {firstName}, and I hope you feel deeply loved from morning to night. Cheers to {age} and another year of growing, shining, and thriving.",
 ] as const;
 
 export const DEFAULT_TEMPLATE = DEFAULT_TEMPLATES[0];

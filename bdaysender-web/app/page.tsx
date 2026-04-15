@@ -14,6 +14,12 @@ function formatDateDisplay(date: Date): string {
   return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 }
 
+type SendPopupState = {
+  isOpen: boolean;
+  tone: "success" | "error";
+  message: string;
+};
+
 export default function Home() {
   const [people, setPeople] = useState<Person[]>([]);
   const [template, setTemplate] = useState<MessageTemplate | null>(null);
@@ -24,6 +30,11 @@ export default function Home() {
   const [showPersonForm, setShowPersonForm] = useState(false);
   const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
   const [sendingPersonId, setSendingPersonId] = useState<number | null>(null);
+  const [sendPopup, setSendPopup] = useState<SendPopupState>({
+    isOpen: false,
+    tone: "success",
+    message: "",
+  });
   const [status, setStatus] = useState("Loading...");
 
   const selectedDate = useMemo(() => {
@@ -170,10 +181,21 @@ export default function Home() {
         throw new Error(payload.error || "Unable to send birthday message");
       }
       setStatus(`Birthday message sent to ${person.name}.`);
+      setSendPopup({
+        isOpen: true,
+        tone: "success",
+        message: `Birthday message sent to ${person.name}.`,
+      });
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       setStatus(
-        `Send failed for ${person.name}: ${error instanceof Error ? error.message : "Unknown error"}`,
+        `Send failed for ${person.name}: ${errorMessage}`,
       );
+      setSendPopup({
+        isOpen: true,
+        tone: "error",
+        message: `Failed to send message to ${person.name}: ${errorMessage}`,
+      });
     } finally {
       setSendingPersonId(null);
     }
@@ -363,6 +385,28 @@ export default function Home() {
                 )}
               </>
             )}
+          </div>
+        </div>
+      ) : null}
+
+      {sendPopup.isOpen ? (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/45 px-4">
+          <div className="surface-card w-full max-w-sm rounded-2xl p-5">
+            <h3
+              className={`text-lg font-bold ${sendPopup.tone === "success" ? "text-emerald-700" : "text-rose-700"}`}
+            >
+              {sendPopup.tone === "success" ? "Message Sent" : "Send Failed"}
+            </h3>
+            <p className="mt-2 text-sm text-slate-700">{sendPopup.message}</p>
+            <div className="mt-4 flex justify-end">
+              <button
+                type="button"
+                className="btn-secondary rounded-full px-4 py-2 text-sm"
+                onClick={() => setSendPopup((current) => ({ ...current, isOpen: false }))}
+              >
+                OK
+              </button>
+            </div>
           </div>
         </div>
       ) : null}

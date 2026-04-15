@@ -16,6 +16,14 @@ const templateSchema = z.object({
   templates: z.array(z.string().trim().min(1)).optional(),
 });
 
+const LEGACY_DEFAULT_TEMPLATES = [
+  "Happy Birthday, {firstName}! Wishing you joy, good health, and meaningful moments this year. You are now {age}!",
+  "Cheers to you, {firstName}! May this birthday open a year full of growth and happiness as you turn {age}.",
+  "Warm birthday wishes, {firstName}! Hope your day is filled with love, laughter, and everything you enjoy at {age}.",
+  "Happy Birthday, {firstName}! Thank you for being wonderful. Wishing you confidence and success at {age}.",
+  "Have an amazing birthday, {firstName}! May this new chapter at {age} bring peace, purpose, and great memories.",
+] as const;
+
 function validateTemplates(templates: string[]): string[] {
   const normalized = normalizeTemplates(templates);
   for (const [idx, template] of normalized.entries()) {
@@ -30,12 +38,33 @@ function validateTemplates(templates: string[]): string[] {
 }
 
 async function ensureTemplateRow() {
+  const serializedDefaults = serializeTemplates([...DEFAULT_TEMPLATES]);
+  const serializedLegacyDefaults = serializeTemplates([...LEGACY_DEFAULT_TEMPLATES]);
+
   await query(
     `INSERT INTO message_template (id, body)
      VALUES (1, $1)
      ON CONFLICT (id) DO NOTHING`,
-    [serializeTemplates([...DEFAULT_TEMPLATES])],
+    [serializedDefaults],
   );
+
+  const current = await query<{ body: string | null }>(
+    `SELECT body
+     FROM message_template
+     WHERE id = 1`,
+  );
+  const currentBody = current.rows[0]?.body?.trim();
+  const shouldMigrateLegacyDefaults =
+    currentBody === serializedLegacyDefaults || currentBody === LEGACY_DEFAULT_TEMPLATES[0];
+
+  if (shouldMigrateLegacyDefaults) {
+    await query(
+      `UPDATE message_template
+       SET body = $1, updated_at = NOW()
+       WHERE id = 1`,
+      [serializedDefaults],
+    );
+  }
 }
 
 export async function GET() {
