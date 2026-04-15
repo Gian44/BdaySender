@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { query } from "@/lib/db";
-import type { SendLog } from "@/lib/types";
+import { query } from "../../lib/db";
+import type { SendLog } from "../../lib/types";
 
 export const dynamic = "force-dynamic";
 

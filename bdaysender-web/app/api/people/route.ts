@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { query } from "@/lib/db";
-import { seedPeopleIfEmpty } from "@/lib/seed-db";
-import type { Person } from "@/lib/types";
+import { query } from "../../../lib/db";
+import { seedPeopleIfEmpty } from "../../../lib/seed-db";
+import type { Person } from "../../../lib/types";
 
 const personCreateSchema = z.object({
   name: z.string().trim().min(1, "Name is required"),

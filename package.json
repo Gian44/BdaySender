@@ -2,9 +2,9 @@
   "name": "bdaysender",
   "private": true,
   "scripts": {
-    "dev": "npm --prefix bdaysender-web run dev",
-    "build": "npm --prefix bdaysender-web run build",
-    "start": "npm --prefix bdaysender-web run start",
-    "vercel-build": "npm --prefix bdaysender-web run build"
+    "dev": "cd bdaysender-web && npm run dev",
+    "build": "cd bdaysender-web && npm run build",
+    "start": "cd bdaysender-web && npm run start",
+    "vercel-build": "cd bdaysender-web && npm run build"
   }
 }

@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { query } from "@/lib/db";
+import { query } from "../../../lib/db";
 import {
   DEFAULT_TEMPLATE,
   DEFAULT_TEMPLATES,
   normalizeTemplates,
   parseTemplates,
   serializeTemplates,
-} from "@/lib/template";
-import type { MessageTemplate } from "@/lib/types";
+} from "../../../lib/template";
+import type { MessageTemplate } from "../../../lib/types";
 
 const templateSchema = z.object({
   body: z.string().trim().optional(),

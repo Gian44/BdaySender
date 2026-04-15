@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-import type { Person } from "@/lib/types";
+import type { Person } from "../lib/types";
 
 type CalendarViewProps = {
   people: Person[];

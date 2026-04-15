@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
-import { getTimezoneDateParts, APP_TIMEZONE, calculateAge } from "@/lib/date";
-import { query } from "@/lib/db";
-import { sendBirthdayEmail } from "@/lib/mailer";
-import { DEFAULT_TEMPLATE, parseTemplates, pickRandomTemplate, renderTemplate } from "@/lib/template";
+import { getTimezoneDateParts, APP_TIMEZONE, calculateAge } from "../../../../lib/date";
+import { query } from "../../../../lib/db";
+import { sendBirthdayEmail } from "../../../../lib/mailer";
+import { DEFAULT_TEMPLATE, parseTemplates, pickRandomTemplate, renderTemplate } from "../../../../lib/template";
 
 type PersonRow = {
   id: number;

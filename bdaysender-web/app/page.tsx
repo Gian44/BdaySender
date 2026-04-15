@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
-import CalendarView from "@/components/CalendarView";
-import PersonForm from "@/components/PersonForm";
-import TemplateEditor from "@/components/TemplateEditor";
-import { calculateAge } from "@/lib/date";
-import { DEFAULT_TEMPLATES, parseTemplates } from "@/lib/template";
-import type { MessageTemplate, Person } from "@/lib/types";
+import CalendarView from "../components/CalendarView";
+import PersonForm from "../components/PersonForm";
+import TemplateEditor from "../components/TemplateEditor";
+import { calculateAge } from "../lib/date";
+import { DEFAULT_TEMPLATES, parseTemplates } from "../lib/template";
+import type { MessageTemplate, Person } from "../lib/types";
 
 function formatDateDisplay(date: Date): string {
   return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { query } from "@/lib/db";
-import type { Person } from "@/lib/types";
+import { query } from "../../../../lib/db";
+import type { Person } from "../../../../lib/types";
 
 const personUpdateSchema = z
   .object({

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { DEFAULT_TEMPLATES, normalizeTemplates, renderTemplate } from "@/lib/template";
+import { DEFAULT_TEMPLATES, normalizeTemplates, renderTemplate } from "../lib/template";
 
 type TemplateEditorProps = {
   initialTemplates: string[];
