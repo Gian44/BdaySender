@@ -138,10 +138,10 @@ export default function CalendarView({
   }, [month, year]);
 
   return (
-    <section className="surface-card relative overflow-hidden rounded-2xl p-4">
+    <section className="surface-card relative overflow-hidden rounded-2xl p-2.5 sm:p-4">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.22]"
+        className="pointer-events-none absolute inset-0 opacity-[0.14] sm:opacity-[0.22]"
         style={{
           backgroundImage: `
             linear-gradient(25deg, #fb7185 0 100%),
@@ -170,7 +170,7 @@ export default function CalendarView({
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.12]"
+        className="pointer-events-none absolute inset-0 opacity-[0.08] sm:opacity-[0.12]"
         style={{
           backgroundImage: `
             linear-gradient(72deg, transparent 0 42%, #fb7185 43% 57%, transparent 58%),
@@ -209,11 +209,11 @@ export default function CalendarView({
       />
 
       <div className="relative z-10">
-      <header className="mb-4 flex items-center justify-between">
+      <header className="mb-2 flex items-center justify-between sm:mb-4">
         <button
           type="button"
           aria-label="Previous month"
-          className="rounded-full p-2 text-2xl font-black leading-none text-slate-500 transition hover:text-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300"
+          className="rounded-full p-1.5 text-xl font-black leading-none text-slate-500 transition hover:text-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300 sm:p-2 sm:text-2xl"
           onClick={() => onMonthChange(-1)}
         >
           ‹
@@ -222,14 +222,14 @@ export default function CalendarView({
           {monthDoodles.map((doodle, index) => (
             <span
               key={`${doodle.glyph}-${index}`}
-              className={`pointer-events-none absolute ${doodle.className}`}
+              className={`pointer-events-none absolute hidden sm:block ${doodle.className}`}
               style={{ color: doodle.color }}
             >
               {doodle.glyph}
             </span>
           ))}
           <h2
-            className="rounded-full bg-[#fff1f5] px-5 py-1.5 text-xl font-black text-[#1e2757] shadow-sm"
+            className="rounded-full bg-[#fff1f5] px-3 py-1 text-base font-black text-[#1e2757] shadow-sm sm:px-5 sm:py-1.5 sm:text-xl"
             style={{ fontFamily: '"Comic Sans MS", "Trebuchet MS", cursive' }}
           >
             {monthLabel}
@@ -238,23 +238,23 @@ export default function CalendarView({
         <button
           type="button"
           aria-label="Next month"
-          className="rounded-full p-2 text-2xl font-black leading-none text-slate-500 transition hover:text-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300"
+          className="rounded-full p-1.5 text-xl font-black leading-none text-slate-500 transition hover:text-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300 sm:p-2 sm:text-2xl"
           onClick={() => onMonthChange(1)}
         >
           ›
         </button>
       </header>
 
-      <div className="grid grid-cols-7 gap-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
+      <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:gap-2 sm:text-xs">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((weekday) => (
           <div key={weekday}>{weekday}</div>
         ))}
       </div>
 
-      <div className="mt-2 grid grid-cols-7 gap-2">
+      <div className="mt-2 grid grid-cols-7 gap-1 sm:gap-2">
         {cells.map((day, index) =>
           day === null ? (
-            <div key={`empty-${index}`} className="h-24 rounded-xl bg-slate-50" />
+            <div key={`empty-${index}`} className="h-20 rounded-lg bg-slate-50 sm:h-24 sm:rounded-xl" />
           ) : (
             (() => {
               const birthdaysCount = getBirthdaysCount(people, month, day);
@@ -264,61 +264,64 @@ export default function CalendarView({
                   key={day}
                   type="button"
                   onClick={() => onSelectDay(day)}
-                  className={`group h-24 rounded-xl p-1.5 text-left transition ${
+                  className={`group h-20 rounded-lg p-1 text-left transition sm:h-24 sm:rounded-xl sm:p-1.5 ${
                     selectedDay === day
                       ? "bg-[#fdf2f8] ring-2 ring-pink-300"
                       : "bg-white"
                   }`}
                 >
                   <div className="relative h-full rounded-lg">
-                    <div className="absolute inset-x-1 bottom-1 top-4">
+                    <div className="absolute inset-x-0.5 bottom-0.5 top-3 sm:inset-x-1 sm:bottom-1 sm:top-4">
                       <div
-                        className="absolute inset-x-0 bottom-0 top-5 rounded-b-[10px] border-[3px]"
+                        className="absolute inset-x-0 bottom-0 top-4 rounded-b-[8px] border-[2px] sm:top-5 sm:rounded-b-[10px] sm:border-[3px]"
                         style={{ borderColor: "#1e2757", backgroundColor: palette.box }}
                       />
                       <div
-                        className="absolute inset-x-[-2px] top-0 h-6 rounded-[6px] border-[3px]"
+                        className="absolute inset-x-[-1px] top-0 h-4 rounded-[5px] border-[2px] sm:inset-x-[-2px] sm:h-6 sm:rounded-[6px] sm:border-[3px]"
                         style={{ borderColor: "#1e2757", backgroundColor: palette.lid }}
                       />
 
                       <div
-                        className="absolute inset-y-0 left-1/2 w-3 -translate-x-1/2"
+                        className="absolute inset-y-0 left-1/2 w-2 -translate-x-1/2 sm:w-3"
                         style={{ backgroundColor: palette.ribbon }}
                       />
-                      <div className="absolute inset-x-[-2px] top-[7px] h-[7px]" style={{ backgroundColor: palette.topBand }} />
+                      <div className="absolute inset-x-[-1px] top-[5px] h-[4px] sm:inset-x-[-2px] sm:top-[7px] sm:h-[7px]" style={{ backgroundColor: palette.topBand }} />
                       <div
-                        className="absolute inset-x-[-2px] top-[5px] h-[4px]"
+                        className="absolute inset-x-[-1px] top-[4px] h-[2px] sm:inset-x-[-2px] sm:top-[5px] sm:h-[4px]"
                         style={{ backgroundColor: palette.ribbon }}
                       />
 
                       <div
-                        className="absolute left-1/2 top-0 h-[10px] w-[10px] -translate-x-1/2 -translate-y-[8px] rounded-full border-[3px]"
+                        className="absolute left-1/2 top-0 h-[7px] w-[7px] -translate-x-1/2 -translate-y-[5px] rounded-full border-[2px] sm:h-[10px] sm:w-[10px] sm:-translate-y-[8px] sm:border-[3px]"
                         style={{ borderColor: "#1e2757", backgroundColor: palette.bow }}
                       />
                       <div
-                        className="absolute left-1/2 top-0 h-[14px] w-[28px] -translate-x-[102%] -translate-y-[19px] rotate-[34deg] rounded-[999px] border-[3px]"
+                        className="absolute left-1/2 top-0 h-[9px] w-[18px] -translate-x-[102%] -translate-y-[11px] rotate-[34deg] rounded-[999px] border-[2px] sm:h-[14px] sm:w-[28px] sm:-translate-y-[19px] sm:border-[3px]"
                         style={{ borderColor: "#1e2757", backgroundColor: palette.bow }}
                       />
                       <div
-                        className="absolute left-1/2 top-0 h-[8px] w-[24px] -translate-x-[100%] -translate-y-[12px] rotate-[34deg] rounded-[999px]"
+                        className="absolute left-1/2 top-0 h-[5px] w-[15px] -translate-x-[100%] -translate-y-[7px] rotate-[34deg] rounded-[999px] sm:h-[8px] sm:w-[24px] sm:-translate-y-[12px]"
                         style={{ backgroundColor: palette.bowInner }}
                       />
                       <div
-                        className="absolute left-1/2 top-0 h-[14px] w-[28px] translate-x-[2%] -translate-y-[19px] rotate-[-34deg] rounded-[999px] border-[3px]"
+                        className="absolute left-1/2 top-0 h-[9px] w-[18px] translate-x-[2%] -translate-y-[11px] rotate-[-34deg] rounded-[999px] border-[2px] sm:h-[14px] sm:w-[28px] sm:-translate-y-[19px] sm:border-[3px]"
                         style={{ borderColor: "#1e2757", backgroundColor: palette.bow }}
                       />
                       <div
-                        className="absolute left-1/2 top-0 h-[8px] w-[24px] translate-x-[1%] -translate-y-[12px] rotate-[-34deg] rounded-[999px]"
+                        className="absolute left-1/2 top-0 h-[5px] w-[15px] translate-x-[1%] -translate-y-[7px] rotate-[-34deg] rounded-[999px] sm:h-[8px] sm:w-[24px] sm:-translate-y-[12px]"
                         style={{ backgroundColor: palette.bowInner }}
                       />
                     </div>
 
-                    <div className="absolute left-2 top-[19px] text-sm font-black leading-none" style={{ color: palette.text }}>
+                    <div className="absolute left-1 top-[13px] text-[11px] font-black leading-none sm:left-2 sm:top-[19px] sm:text-sm" style={{ color: palette.text }}>
                       {day}
                     </div>
 
-                    <div className="absolute bottom-1.5 left-1.5 rounded-md bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-[#1e2757]">
-                      {birthdaysCount} birthday{birthdaysCount === 1 ? "" : "s"}
+                    <div className="absolute bottom-1 left-1 rounded-md bg-white/90 px-1 py-0.5 text-[9px] font-semibold leading-none text-[#1e2757] sm:bottom-1.5 sm:left-1.5 sm:px-1.5 sm:text-[10px]">
+                      <span className="sm:hidden">{birthdaysCount}</span>
+                      <span className="hidden sm:inline">
+                        {birthdaysCount} birthday{birthdaysCount === 1 ? "" : "s"}
+                      </span>
                     </div>
                   </div>
                 </button>
