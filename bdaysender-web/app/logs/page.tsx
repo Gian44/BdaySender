@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { APP_TIMEZONE, formatDateTimeInTimezone } from "../../lib/date";
 import { query } from "../../lib/db";
 import type { SendLog } from "../../lib/types";
 
@@ -66,7 +67,7 @@ export default async function LogsPage() {
               ) : (
                 logs.map((log) => (
                   <tr key={log.id} className="border-t border-slate-100">
-                    <td className="px-3 py-2">{new Date(log.sent_at).toLocaleString()}</td>
+                    <td className="px-3 py-2">{formatDateTimeInTimezone(log.sent_at, APP_TIMEZONE)}</td>
                     <td className="px-3 py-2">{log.sent_local_date}</td>
                     <td className="px-3 py-2">{log.person_name ?? "Unknown"}</td>
                     <td className="px-3 py-2">{log.person_email ?? "Unknown"}</td>

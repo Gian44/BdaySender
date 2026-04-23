@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import CalendarView from "../components/CalendarView";
 import PersonForm from "../components/PersonForm";
 import TemplateEditor from "../components/TemplateEditor";
-import { calculateAge } from "../lib/date";
+import { calculateAge, dateOnlyToLocalDate, getDateOnlyParts } from "../lib/date";
 import { DEFAULT_TEMPLATES, parseTemplates } from "../lib/template";
 import type { MessageTemplate, Person } from "../lib/types";
 
@@ -102,9 +102,9 @@ export default function Home() {
 
   const birthdaysOnSelectedDate = useMemo(() => {
     return people.filter((person) => {
-      const birthdate = new Date(person.birthdate);
+      const birthdate = getDateOnlyParts(person.birthdate);
       return (
-        birthdate.getMonth() === selectedDate.getMonth() && birthdate.getDate() === selectedDate.getDate()
+        birthdate.month === selectedDate.getMonth() + 1 && birthdate.day === selectedDate.getDate()
       );
     });
   }, [people, selectedDate]);
@@ -360,7 +360,7 @@ export default function Home() {
               <>
                 {editingPerson ? (
                   <PersonForm
-                    selectedDate={new Date(editingPerson.birthdate)}
+                    selectedDate={dateOnlyToLocalDate(editingPerson.birthdate)}
                     initialValues={{
                       name: editingPerson.name,
                       nickname: editingPerson.nickname ?? "",

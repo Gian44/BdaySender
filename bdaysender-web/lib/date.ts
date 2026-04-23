@@ -7,6 +7,12 @@ type TimezoneDateParts = {
   isoDate: string;
 };
 
+type DateOnlyParts = {
+  year: number;
+  month: number;
+  day: number;
+};
+
 export function getTimezoneDateParts(date: Date, timeZone = DEFAULT_TZ): TimezoneDateParts {
   const formatter = new Intl.DateTimeFormat("en-CA", {
     timeZone,
@@ -22,12 +28,59 @@ export function getTimezoneDateParts(date: Date, timeZone = DEFAULT_TZ): Timezon
   return { year, month, day, isoDate };
 }
 
-export function calculateAge(birthdate: string | Date, now = new Date()): number {
-  const birth = new Date(birthdate);
-  let age = now.getFullYear() - birth.getFullYear();
+export function getDateOnlyParts(value: string | Date): DateOnlyParts {
+  if (typeof value === "string") {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (match) {
+      return {
+        year: Number(match[1]),
+        month: Number(match[2]),
+        day: Number(match[3]),
+      };
+    }
+  }
+
+  const parsed = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new Error("Invalid date value");
+  }
+  return {
+    year: parsed.getUTCFullYear(),
+    month: parsed.getUTCMonth() + 1,
+    day: parsed.getUTCDate(),
+  };
+}
+
+export function dateOnlyToLocalDate(value: string): Date {
+  const { year, month, day } = getDateOnlyParts(value);
+  return new Date(year, month - 1, day);
+}
+
+export function formatDateTimeInTimezone(
+  value: string | Date,
+  timeZone = DEFAULT_TZ,
+  locale = "en-US",
+): string {
+  const date = value instanceof Date ? value : new Date(value);
+  return new Intl.DateTimeFormat(locale, {
+    timeZone,
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(date);
+}
+
+export function calculateAge(birthdate: string | Date, now = new Date(), timeZone = DEFAULT_TZ): number {
+  const birth = getDateOnlyParts(birthdate);
+  const today = getTimezoneDateParts(now, timeZone);
+
+  let age = today.year - birth.year;
   const hasBirthdayPassed =
-    now.getMonth() > birth.getMonth() ||
-    (now.getMonth() === birth.getMonth() && now.getDate() >= birth.getDate());
+    today.month > birth.month ||
+    (today.month === birth.month && today.day >= birth.day);
   if (!hasBirthdayPassed) {
     age -= 1;
   }

@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 
+import { getDateOnlyParts } from "../lib/date";
 import type { Person } from "../lib/types";
 
 type CalendarViewProps = {
@@ -100,8 +101,8 @@ const DOODLE_OPTIONS: DoodleOption[] = [
 
 function getBirthdaysCount(people: Person[], month: number, day: number): number {
   return people.filter((person) => {
-    const birthdate = new Date(person.birthdate);
-    return birthdate.getMonth() + 1 === month && birthdate.getDate() === day;
+    const birthdate = getDateOnlyParts(person.birthdate);
+    return birthdate.month === month && birthdate.day === day;
   }).length;
 }
 
